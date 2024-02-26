@@ -97,11 +97,14 @@ class _AbstractUsedNamesFilter(AbstractFilter):
             # If the path is None, there is no guarantee that parso caches it.
             self._parso_cache_node = None
         else:
-            self._parso_cache_node = get_parso_cache_node(
-                module_context.inference_state.latest_grammar
-                if module_context.is_stub() else module_context.inference_state.grammar,
-                path
-            )
+            try:
+                self._parso_cache_node = get_parso_cache_node(
+                    module_context.inference_state.latest_grammar
+                    if module_context.is_stub() else module_context.inference_state.grammar,
+                    path
+                )
+            except KeyError:
+                self._parso_cache_node = None
         self._used_names = module_context.tree_node.get_used_names()
         self.parent_context = parent_context
 
